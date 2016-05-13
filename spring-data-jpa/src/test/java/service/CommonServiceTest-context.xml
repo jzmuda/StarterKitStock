@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       
+       
+	<bean id="brokerInterface" class="pl.spring.demo.service.impl.BrokerInterfaceImpl" />
+    <bean id="stockDao" class="org.mockito.Mockito" factory-method="mock" primary="true">
+        <constructor-arg value="pl.spring.demo.dao.StockDao" />
+    </bean>
+    <bean id="clock" class="org.mockito.Mockito" factory-method="mock" primary="true">
+        <constructor-arg value="pl.spring.demo.clock.DateClock" />
+    </bean>
+    <bean id="bankInterface" class="org.mockito.Mockito" factory-method="mock" primary="true">
+        <constructor-arg value="pl.spring.demo.service.BankInterface" />
+    </bean>
+    <bean id="transactionValidatorInterface" class="org.mockito.Mockito" factory-method="mock" primary="true">
+        <constructor-arg value="pl.spring.demo.service.TransactionValidatorInterface" />
+    </bean>
+
+</beans>
