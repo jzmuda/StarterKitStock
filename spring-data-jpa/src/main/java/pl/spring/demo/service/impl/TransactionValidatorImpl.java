@@ -2,10 +2,12 @@ package pl.spring.demo.service.impl;
 
 import java.util.Collection;
 
+import org.springframework.stereotype.Component;
+
 import pl.spring.demo.service.TransactionValidatorInterface;
 import pl.spring.demo.to.ShareTo;
 import pl.spring.demo.to.TransactionTo;
-
+@Component
 public class TransactionValidatorImpl implements TransactionValidatorInterface{
 
 	@Override

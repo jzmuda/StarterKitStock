@@ -1,6 +1,8 @@
 package pl.spring.demo.to;
 
 public class TransactionTo {
+	//for the equals method, double has some error from time to time
+	private final double TOLERANCE=0.0001;
 	private String from;
 	private String to;
 	private Double sum;
@@ -31,7 +33,7 @@ public class TransactionTo {
 	    TransactionTo otherTransaction = (TransactionTo)other;
 	    return (this.getFrom().equals(otherTransaction.getFrom()) &&
 	    		this.getTo().equals(otherTransaction.getTo()) &&
-	    		this.getSum().equals(otherTransaction.getSum()));
+	    		(Math.abs(this.getSum()-otherTransaction.getSum())<TOLERANCE));
 	}
 
 }

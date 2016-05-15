@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import pl.spring.demo.clock.DateClock;
 import pl.spring.demo.dao.StockDao;
@@ -14,9 +15,10 @@ import pl.spring.demo.mapper.ShareMapper;
 import pl.spring.demo.service.BankInterface;
 import pl.spring.demo.service.BrokerInterface;
 import pl.spring.demo.service.TransactionValidatorInterface;
+import pl.spring.demo.to.BrokerParams;
 import pl.spring.demo.to.ShareTo;
 import pl.spring.demo.to.TransactionTo;
-
+@Service
 public class BrokerInterfaceImpl implements BrokerInterface{
 	
 	@Autowired
@@ -61,15 +63,20 @@ public class BrokerInterfaceImpl implements BrokerInterface{
 	private double clientWillGet;
 	
 	public BrokerInterfaceImpl() {
-		super();
 		ran = new Random();
 	}
 	
-	
+	public void init(BrokerParams params) {
+		this.buySpread=params.getBuySpread();
+		this.sellSpread=params.getSellSpread();
+		this.buyPriceSpread=params.getBuyPriceSpread();
+		this.sellPriceSpread = params.getSellPriceSpread();
+		this.revenueWeight=params.getRevenueWeight();
+		this.revenueHeight=params.getRevenueHeight();
+	};
 
 	public BrokerInterfaceImpl(int buySpread, int sellSpread, double buyPriceSpread, double sellPriceSpread,
 			double revenueWeight, double revenueHeight) {
-		super();
 		this.buySpread = buySpread;
 		this.sellSpread = sellSpread;
 		this.buyPriceSpread = buyPriceSpread;
@@ -101,13 +108,15 @@ public class BrokerInterfaceImpl implements BrokerInterface{
 		clientWillBuy = new HashSet<ShareTo>();
 		List <ShareTo> comparator = ShareMapper.map2To(stockDao.getSharesAtDate(clock.getDate()));
 		if(comparator.isEmpty())
-			throw new IllegalArgumentException("Non-session day");
+			throw new IllegalArgumentException(""+clock.getDate()+" No Stock Exchange Session");
 		for(ShareTo share:toBuy) {
 			double price=getPrice(comparator,share.getCompany());
+			Integer shares= randomizeBuyNumber(share.getNumber());
+			if(shares>0)
 			clientWillBuy.add(new
 					ShareTo(share.getDate(),share.getCompany(),
 							randomizeBuyPrice(price),
-							randomizeBuyNumber(share.getNumber())));
+							shares));
 		}
 		evaluatePayment();
 		return clientWillBuy;
@@ -143,13 +152,16 @@ public class BrokerInterfaceImpl implements BrokerInterface{
 	}
 	
 	/**
-	 * Broker asks for payment for each operation. Client should be able to ask how much it is.
+	 * Broker asks for payment for each operation!
 	 * @param price
 	 * @return
 	 */
-	@Override
+	
 	public double addRevenue(double price) {
 		return  price*revenueWeight >revenueHeight ? round2(price*(1.0+revenueWeight)) : round2(price + revenueHeight);
+	}
+	public double subtractRevenue(double price) {
+		return  price*revenueWeight >revenueHeight ? round2(price*(1.0-revenueWeight)) : round2(price - revenueHeight);
 	}
 	/**
 	 * 
@@ -172,10 +184,12 @@ public class BrokerInterfaceImpl implements BrokerInterface{
 			throw new IllegalArgumentException("Non-session day");
 		for(ShareTo share:toSell) {
 			double price=getPrice(comparator,share.getCompany());
+			Integer shares = randomizeSellNumber(share.getNumber());
+			if(shares>0)
 			clientWillSell.add(new
 					ShareTo(share.getDate(),share.getCompany(),
 							randomizeSellPrice(price),
-							randomizeSellNumber(share.getNumber())));
+							shares));
 		}
 		evaluateClientsIncome();
 		return clientWillSell;
@@ -185,7 +199,7 @@ public class BrokerInterfaceImpl implements BrokerInterface{
 		clientWillGet = 0;
 		for(ShareTo share: clientWillSell) {
 			double price= share.getValue()*share.getNumber();
-			clientWillGet-=addRevenue(price);
+			clientWillGet+=addRevenue(price);
 		}
 		round2(clientWillGet);
 		return clientWillGet;

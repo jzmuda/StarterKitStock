@@ -1,23 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <import resource="cache-context.xml" />
 
-    <aop:aspectj-autoproxy/>
+ 	<context:annotation-config />
+	<context:component-scan base-package="pl.spring.demo" />
+ 
+	<util:properties id="applicationProperties"
+		location="classpath:config/application.properties" />
 
-    <context:annotation-config />
-    <context:component-scan base-package="pl.spring.demo" />
-
-    <util:properties id="applicationProperties" location="classpath:config/application.properties"/>
-	
 	<bean id="stockDao" class="pl.spring.demo.dao.impl.StockDaoImpl">
-		<constructor-arg type="java.lang.String" value="dane.csv"/>
+		<constructor-arg type="java.lang.String" value="dane.csv" />
 	</bean>
 
-
+	<bean id="clock" class="pl.spring.demo.clock.DateClock">
+		<constructor-arg index="0" value="2013" />
+		<constructor-arg index="1" value="3" />
+		<constructor-arg index="2" value="4" />
+	</bean>
+	
+	<bean id="brokerInterface" class="pl.spring.demo.service.impl.BrokerInterfaceImpl">
+		<constructor-arg index="0" value="0" />
+		<constructor-arg index="1" value="0" />
+		<constructor-arg index="2" value="0" />
+		<constructor-arg index="3" value="0" />
+		<constructor-arg index="4" value="0.005" />
+		<constructor-arg index="5" value="5.0" />
+	</bean>
+	
 </beans>

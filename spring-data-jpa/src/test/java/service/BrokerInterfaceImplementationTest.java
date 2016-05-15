@@ -217,17 +217,7 @@ public class BrokerInterfaceImplementationTest {
 		//then
 		fail("Test should throw an exception for No-Session day");
 	}
-	
-	@Test
-	public void testShouldAddRevenue() {
-		//given
-		double price=10.0;
-		//when
-		double revenue=brokerInterface.addRevenue(price);
-		//then
-		assertTrue(revenue>0);
-	}
-	
+		
 	@Test
 	public void testShouldNegotiateAndGetShares() {
 		//given

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.stereotype.Component;
+
 import pl.spring.demo.service.ClientStrategy;
 import pl.spring.demo.to.CurrencyTo;
 import pl.spring.demo.to.ShareTo;
@@ -17,6 +19,7 @@ import pl.spring.demo.to.ShareTo;
  * @author JZMUDA
  *
  */
+@Component
 public class ClientStrategyImpl implements ClientStrategy{
 /**
  * data on mean price value, price variation,
@@ -31,9 +34,14 @@ public class ClientStrategyImpl implements ClientStrategy{
 
 
 	/**
-	 * How much the price has to differ (in standard deviation units) from mean to buy/sell shares?
+	 * How much the price has to differ (in standard deviation units) from mean to buy shares?
 	 */
-	private double variationMultiplier = 1.01;
+	private double variationMultiplierBuy = 2.0;
+	/**
+	 * How much the price has to differ (in standard deviation units) from mean to sell shares?
+	 */
+	private double variationMultiplierSell = 2.0;
+	
 	/**
 	 * what fraction of money are you willing to spend?
 	 * Keep below 1.0, or you're in trouble
@@ -45,14 +53,6 @@ public class ClientStrategyImpl implements ClientStrategy{
 	
 	public ClientStrategyImpl() {
 	}
-	
-	
-
-	public ClientStrategyImpl(double variationMultiplier, double singleBuyRatio) {
-		this.variationMultiplier = variationMultiplier;
-		this.singleBuyRatio = singleBuyRatio;
-	}
-
 
 
 	@Override
@@ -76,10 +76,11 @@ public class ClientStrategyImpl implements ClientStrategy{
 			double moneyToSpend = money*singleBuyRatio;
 			for(String key:current.keySet()) {
 				double currentPrice=current.get(key);
-				if(currentPrice<mean.get(key)-variationMultiplier*standardDeviation.get(key)) {
+				if(currentPrice<mean.get(key)-variationMultiplierBuy*standardDeviation.get(key)) {
 					int toBuy = (int) Math.round(moneyToSpend/currentPrice);
 					if(toBuy>0) {
 						result.add(new ShareTo(currentDate,key,currentPrice,toBuy));
+						moneyToSpend-=currentPrice*toBuy;
 					}
 				}
 			}
@@ -101,7 +102,7 @@ public class ClientStrategyImpl implements ClientStrategy{
 		if(possessedShares.keySet().size()>0) {
 			for(String key:current.keySet()) {
 				double currentPrice=current.get(key);
-				if(currentPrice>mean.get(key)+variationMultiplier*standardDeviation.get(key)) {
+				if(currentPrice>mean.get(key)+variationMultiplierSell*standardDeviation.get(key)) {
 					if(possessedShares.containsKey(key)) {
 						result.add(new ShareTo(currentDate,key,currentPrice,possessedShares.get(key)));
 					}

@@ -11,9 +11,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import org.springframework.stereotype.Repository;
+
 import entity.ShareEntity;
 
-
+@Repository
 public class StockDaoImpl implements StockDao{
 	
 	private List<ShareEntity> data;

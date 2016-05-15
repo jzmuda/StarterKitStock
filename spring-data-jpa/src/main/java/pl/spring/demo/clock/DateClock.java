@@ -3,7 +3,6 @@ package pl.spring.demo.clock;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 @Service
 public class DateClock {
@@ -48,6 +47,10 @@ public class DateClock {
 	}
 
 	public int getDate() {
+		return year*yearMultiplier + month*monthMultiplier + day;
+	}
+	
+	public int convertDateToInt(int year, int month, int day) {
 		return year*yearMultiplier + month*monthMultiplier + day;
 	}
 

@@ -1,9 +1,10 @@
 package service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,8 +59,6 @@ public class ClientStrategyImplTest {
 		//when
 		strategy.thinkBuyingShares(HISTORY1, POSSESSED1, MONEY);
 		Map<String,Double> means = strategy.getMean();
-		Map<String,Double> variations = strategy.getStandardDeviation();
-		Map<String,Double> current = strategy.getCurrent();
 		//then (it's double, so there is some precision problem)
 		assertTrue(means.keySet().contains(COMPANY1));
 		assertTrue(means.keySet().contains(COMPANY2));
